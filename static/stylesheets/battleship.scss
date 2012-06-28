@@ -21,8 +21,6 @@ footer {
 
 @include sticky-footer(50px, "#main", "#sticky-footer", "footer");
 
-#notification { position: absolute; bottom: 1px; left: 50%; margin-left: -115px; width: 230px; background-color: #F00; @include border-top-radius(5px); padding: 20px 10px }
-
 /*
    BOARDS
    -----------------------------------------------------------------------------
@@ -59,6 +57,16 @@ td.missed { background-image: url('/static/images/tile-missed.png'); }
 td.loading { background-image: url('/static/images/tile-loading.png'); }
 td.hit { background-image: url('/static/images/tile-hit.png'); }
 td.down { background-image: url('/static/images/tile-down.png'); }
+td.ship { background-color: $bright-orange!important; }
+
+
+/*
+   NOTIFICATIONS
+   -----------------------------------------------------------------------------
+ */
+#notification { background-color: $kind-of-gray; color: $bright-orange; font-size: 11pt; font-weight: bold; position: absolute; bottom: 1px; left: 50%; margin-left: -115px; width: 230px; @include border-top-radius(5px); padding: 20px 10px }
+#notification.shoot { background-color: $bright-orange; color: #FFF }
+#notification.success, #notification failure { background-color: #1e72a6; color: #FFF }
 
 /*
    TITLES & TEXT
