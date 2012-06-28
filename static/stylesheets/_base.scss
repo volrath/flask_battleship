@@ -1,0 +1,19 @@
+@import "compass";
+@import "compass/reset";
+@import "compass/utilities";
+@import "compass/css3/opacity";
+@import "compass/css3/border-radius";
+
+@import "blueprint/grid";
+@import "blueprint";
+
+/*
+   VARIABLES
+   -----------------------------------------------------------------------------
+ */
+$sky-blue: #69D2E7;
+$water-blue: #A7DBD8;
+$kind-of-gray: #E0E4CC;
+$darker-gray: #c8cbb6;
+$wood-orange: #F38630;
+$bright-orange: #FA6900;

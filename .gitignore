@@ -1,0 +1,4 @@
+*.pyc
+*~
+static/css
+.sass-cache
