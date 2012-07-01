@@ -128,8 +128,29 @@ $(function(){
 	tiles: new TileList,
 
 	events: {
-	    // shoot
+	    'click td': 'alertShoot',
 	},
+
+	activate: function() {
+	    // Handles a new turn.
+	    this.$el.addClass('active attack');
+	    this.tiles.each(function(tile) { tile.set('clickable', true) });
+	    Notifications.aim();
+	},
+
+	deactivate: function() {
+	    this.$el.removeClass('active attack');
+	    this.tiles.each(function(tile) { tile.set('clickable', false) });
+	}, 
+
+	shoot: function() {
+	    // Handle shoot
+	    this.tiles.aimed()[0].save();
+	    // ...
+	    this.deactivate();
+	},
+
+	alertShoot: function() { Notifications.shoot(); },
     });
     _.extend(AttackBoard.prototype, BoardMixin);
 
