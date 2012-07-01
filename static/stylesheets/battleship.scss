@@ -68,6 +68,8 @@ td.ship { background-color: $bright-orange!important; }
 #notification.shoot { background-color: $bright-orange; color: #FFF }
 #notification.success, #notification failure { background-color: #1e72a6; color: #FFF }
 
+#notification #shoot { cursor: pointer; height: 100% }
+
 /*
    TITLES & TEXT
    -----------------------------------------------------------------------------
