@@ -167,6 +167,10 @@ $(function(){
 	    return this.setMessage('<div id="shoot">SHOOT!</div>', 'shoot');
 	},
 
+	aim: function() {
+	    return this.setMessage('Your move! aim your target.', 'info');
+	},
+
 	wait: function() {
 	    return this.setMessage('Wait for your opponent\'s move.', 'info');
 	},
@@ -176,15 +180,17 @@ $(function(){
 	},
 
 	lose: function() {
-	    return this.setMessage('You Lose =(<br /><span id="restart">Restart</span>', 'error');
+	    return this.setMessage('You Lose =(<br /><span id="restart">Restart</span>', 'failure');
 	},
 
 	hide: function() {
-	    this.$el.empty().removeClass().addClass('hide');
+	    this.$el.fadeOut('slow', function() {
+		$(this).empty().removeClass();
+	    });
 	},
 
 	setMessage: function(message, cls) {
-	    this.$el.removeClass('hide').addClass(cls).html(message);
+	    this.$el.addClass(cls).html(message).fadeIn('slow');
 	},
 
 	isHidden: function() {
@@ -192,7 +198,10 @@ $(function(){
 	},
 
 	// actions
-	boardShoot: function() { Attack.shoot(); },
+	boardShoot: function() {
+	    this.hide();
+	    Attack.shoot();
+	},
 
 	restart: function() { location.reload(); },
     });
