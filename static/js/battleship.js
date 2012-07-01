@@ -158,6 +158,83 @@ $(function(){
 	el: $('#board1'),
 	boardname: 'defense',
 	tiles: new TileList,
+
+	loadShips: function() {
+	    var direction   = '-',
+	        row         = 0,
+    	        column      = '-',
+	        rowLimit    = 0,
+	        columnLimit = 0;
+
+	    // Ship #1, 2 tiles
+	    while(direction != 'H' && direction != 'V')
+		//direction = prompt('SHIP #1, 2 Tiles. Direction? [H|V]');
+		direction = 'H';
+	    rowLimit    = (direction == 'H' ? 10 : 10-1);
+	    columnLimit = (direction == 'H' ? String.fromCharCode(74-1) : 'J');
+	    while(row < 1 || row > rowLimit)
+		//row = prompt('SHIP #1, 2 Tiles. Row? [1..' + rowLimit + ']');
+		row = 2;
+	    while(column < 'A' || column > columnLimit)
+		//column = prompt('SHIP #1, 2 Tiles. Column? [A..' + columnLimit + ']');
+		column = 'B';
+	    this.tiles.getByPosition(row, column).set('state', TILE_SHIP);
+	    if (direction == 'H') column = String.fromCharCode(column.charCodeAt()+1);
+	    else row++;
+	    this.tiles.getByPosition(row, column).set('state', TILE_SHIP);
+
+	    direction = '-'; row = 0; column = '-';
+
+	    // Ship #2 & #3, 3 tiles
+	    for (ship = 2; ship < 4; ship++) {
+		while(direction != 'H' && direction != 'V')
+		    //direction = prompt('SHIP #' + ship + ', 3 Tiles. Direction? [H|V]');
+		    direction = (ship == 2 ? 'H' : 'V');
+		rowLimit    = (direction == 'H' ? 10 : 10-2);
+		columnLimit = (direction == 'H' ? String.fromCharCode(74-2) : 'J');
+		while(row < 1 || row > rowLimit)
+		    //row = prompt('SHIP #' + ship + ', 3 Tiles. Row? [1..' + rowLimit + ']');
+		    row = (ship == 2 ? 9 : 6);
+		while(column < 'A' || column > columnLimit)
+		    //column = prompt('SHIP #' + ship + ', 3 Tiles. Column? [A..' + columnLimit + ']');
+		    column = (ship == 2 ? 'G' : 'J');
+		this.tiles.getByPosition(row, column).set('state', TILE_SHIP);
+		if (direction == 'H') column = column = String.fromCharCode(column.charCodeAt()+1);
+		else row++;
+		this.tiles.getByPosition(row, column).set('state', TILE_SHIP);
+		if (direction == 'H') column = column = String.fromCharCode(column.charCodeAt()+1);
+		else row++;
+		this.tiles.getByPosition(row, column).set('state', TILE_SHIP);
+
+		direction = '-'; row = 0; column = '-';
+	    }
+
+	    // Ship #4, 4 tiles
+	    while(direction != 'H' && direction != 'V')
+		//direction = prompt('SHIP #4, 4 Tiles. Direction? [H|V]');
+		direction = 'V';
+	    rowLimit    = (direction == 'H' ? 10 : 10-3);
+	    columnLimit = (direction == 'H' ? String.fromCharCode(74-3) : 'J');
+	    while(row < 1 || row > rowLimit)
+		//row = prompt('SHIP #4, 4 Tiles. Row? [1..' + rowLimit + ']');
+		row = 6;
+	    while(column < 'A' || column > columnLimit)
+		//column = prompt('SHIP #4, 4 Tiles. Column? [A..' + columnLimit + ']');
+		column = 'B';
+	    this.tiles.getByPosition(row, column).set('state', TILE_SHIP);
+	    if (direction == 'H') column = String.fromCharCode(column.charCodeAt()+1);
+	    else row++;
+	    this.tiles.getByPosition(row, column).set('state', TILE_SHIP);
+	    if (direction == 'H') column = String.fromCharCode(column.charCodeAt()+1);
+	    else row++;
+	    this.tiles.getByPosition(row, column).set('state', TILE_SHIP);
+	    if (direction == 'H') column = String.fromCharCode(column.charCodeAt()+1);
+	    else row++;
+	    this.tiles.getByPosition(row, column).set('state', TILE_SHIP);
+
+	    // Done. Now the attack!
+	    Attack.activate();
+	},
     });
     _.extend(DefenseBoard.prototype, BoardMixin);
 
@@ -218,4 +295,6 @@ $(function(){
     // Init Boards!
     var Defense = new DefenseBoard;
     var Attack  = new AttackBoard;
+
+    Defense.loadShips();
 });
