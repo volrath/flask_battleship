@@ -5,6 +5,7 @@ $(function(){
         TILE_LOADING  = 2,
         TILE_HIT      = 3,
         TILE_DOWN     = 4,
+        TILE_SHIP     = 5,
         STATE_CLASS   = {};
 
     STATE_CLASS[TILE_UNTOCHED] = 'untouched';
@@ -13,6 +14,7 @@ $(function(){
     STATE_CLASS[TILE_LOADING] = 'loading';
     STATE_CLASS[TILE_HIT] = 'hit';
     STATE_CLASS[TILE_DOWN] = 'down';
+    STATE_CLASS[TILE_SHIP] = 'ship';
 
     /*
       MODELS
@@ -21,7 +23,8 @@ $(function(){
     var Tile = Backbone.Model.extend({
 	defaults: function() {
 	    return {
-		state: TILE_UNTOCHED
+		state: TILE_UNTOCHED,
+		clickable: false
 		// required attrs:
 		// x -- row (from 1 to 10)
 		// y -- column (from A to J)
@@ -29,25 +32,9 @@ $(function(){
 	},
 
 	isClickeable: function() {
-	    return this.get('board').isActive() &&
+	    return this.get('clickable') &&
 		   (this.get('state') != TILE_UNTOCHED ||
         	    this.get('state') != TILE_AIMED);
-	},
-
-	generateId: function() {
-	    return this.get('board').boardname + ':' +
-		   this.get('x') + ':' +
-		   this.get('y');
-	},
-    });
-
-    var Ship = Backbone.Model.extend({
-	// Attrs:
-	// tiles - array of Tile  # collection?
-	// orientation - vertical or horizontal
-
-	size: function() {
-	    return this.tiles.length();
 	},
     });
 
@@ -63,15 +50,13 @@ $(function(){
 	aimed: function() {
 	    return this.filter(function(tile) { return tile.get('state') === TILE_AIMED });
 	},
-    });
 
-    var ShipList = Backbone.Collection.extend({
-	model: Ship,
-	// Like a manager.
+	getByPosition: function(row, column) {
+	    return this.filter(function(tile) {
+		return tile.get('x') == row && tile.get('y') == column;
+	    })[0];
+	},
     });
-
-    var Tiles = new TileList;
-    var Ships = new ShipList;
 
     /*
       VIEWS
@@ -123,7 +108,6 @@ $(function(){
 		    this.tiles.add({
 			x: i,
 			y: String.fromCharCode(j),
-			board: this
 		    });
 	    }
 	},
