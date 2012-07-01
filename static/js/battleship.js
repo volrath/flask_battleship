@@ -101,14 +101,18 @@ $(function(){
 	},
 
 	render: function() {
+	    var column;
 	    // Creates the 100 tiles
-	    for (i = 1; i <= 10; i++) {
-		this.currentRow = $('<tr class="row-' + i + '"></tr>').appendTo(this.table);
-		for (j = 65; j < 75; j++)
+	    for (row = 1; row <= 10; row++) {
+		this.currentRow = $('<tr class="row-' + row + '"></tr>').appendTo(this.table);
+		for (c = 65; c < 75; c++) {
+		    column = String.fromCharCode(c);
 		    this.tiles.add({
-			x: i,
-			y: String.fromCharCode(j),
+			x: row,
+			y: column,
+			id: this.generateTileId(row, column)
 		    });
+		}
 	    }
 	},
 
@@ -119,7 +123,11 @@ $(function(){
 
 	isActive: function() {
 	    return this.$el.hasClass('active');
-	}
+	},
+
+	generateTileId: function(row, column) {
+	    return this.boardname.charAt(0) + '-' + row + '-' + column;
+	},
     };
 
     var AttackBoard = Backbone.View.extend({
