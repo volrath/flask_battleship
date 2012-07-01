@@ -1,0 +1,6 @@
+# You will also need to install libevent-dev and compass.
+
+Flask==0.8
+Jinja2==2.6
+gevent-socketio==0.3.5-beta
+ipython==0.12.1
