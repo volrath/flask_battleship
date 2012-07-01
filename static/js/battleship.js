@@ -58,6 +58,8 @@ $(function(){
     var TileList = Backbone.Collection.extend({
 	model: Tile,
 
+	url: '/tiles',
+
 	aimed: function() {
 	    return this.filter(function(tile) { return tile.get('state') === TILE_AIMED });
 	},
