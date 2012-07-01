@@ -117,7 +117,7 @@ $(function(){
 	    // Creates the 100 tiles
 	    for (i = 1; i <= 10; i++) {
 		this.currentRow = $('<tr class="row-' + i + '"></tr>').appendTo(this.table);
-		for (j = 65; j <= 75; j++)
+		for (j = 65; j < 75; j++)
 		    this.tiles.add({
 			x: i,
 			y: String.fromCharCode(j),
