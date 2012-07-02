@@ -72,6 +72,37 @@ $(function(){
 	},
     });
 
+
+    var Board = Backbone.Model.extend({
+	urlRoot: '/boards',
+
+	defaults: function() {
+	    return {active: false};
+	},
+
+	initialize: function() {
+	    var self = this;
+	    _.bindAll(this, 'activate', 'deactivate');
+	    this.ioBind('activate', window.io, this.activate);
+	    this.ioBind('deactivate', window.io, this.deactivate);
+	},
+
+	isActive: function() {
+	    return this.get('active');
+	},
+
+	activate: function() {
+	    this.set({active: true});
+	    window.notifications.add({text: 'Your turn!'});
+	},
+
+	deactivate: function() {
+	    this.set({active: false});
+	    window.notifications.add({text: 'Wait for your opponent\'s move...'});
+	}
+    });
+
+
     /*
       COLLECTIONS
       -------------------------------------------------------------------------
@@ -109,7 +140,7 @@ $(function(){
 	},
 
 	react: function() {
-	    if (!this.model.isClickeable()) return false;
+	    if (!this.board.model.isActive()) return false;
 	    // Delete aim from all other tiles
 	    _.each(this.board.tiles.aimed(), function(tile) {
 		if (tile !== this) tile.set('state', TILE_UNTOUCHED)
@@ -122,15 +153,16 @@ $(function(){
 	render: function() {
 	    //this.$el.attr('id', this.generateId(board));
 	    this.$el.removeClass().addClass(STATE_CLASS[this.model.get('state')]);
-	    if (!this.model.isClickeable()) this.$el.addClass('unclickable');
 	    return this;
 	},
     });
 
     var BoardMixin  = {
 	initialize: function() {
+	    this.model = new Board({id: this.boardname});
 	    this.table = this.$('table');
 	    this.tiles.on('add', this.addTile, this);
+	    this.model.on('change', this.setTurn, this);
 	    this.render();
 	},
 
@@ -155,12 +187,14 @@ $(function(){
 	    this.currentRow.append(tileView.render(this).el);
 	},
 
-	isActive: function() {
-	    return this.$el.hasClass('active');
-	},
-
 	generateTileId: function(row, column) {
             return this.boardname.charAt(0) + '-' + row + '-' + column;
+	},
+
+	setTurn: function() {
+	    this.$el.removeClass();
+	    if (this.model.isActive())
+		this.$el.addClass('active');
 	},
     };
 
@@ -173,25 +207,11 @@ $(function(){
 	    'click td': 'alertShoot',
 	},
 
-	activate: function() {
-	    // Handles a new turn.
-	    this.$el.addClass('active attack');
-	    this.tiles.each(function(tile) { tile.set('clickable', true) });
-	    Notifications.aim();
-	},
-
-	deactivate: function() {
-	    this.$el.removeClass('active attack');
-	    this.tiles.each(function(tile) { tile.set('clickable', false) });
-	}, 
-
 	shoot: function() {
 	    // Handle shoot
 	    //this.tiles.aimed()[0].save();
 	    var aimed_tile = this.tiles.aimed()[0];
 	    window.io.emit('user_shoots', aimed_tile.coordinates());
-	    // ...
-	    this.deactivate();
 	},
 
 	alertShoot: function() { Notifications.shoot(); },
@@ -276,8 +296,8 @@ $(function(){
 	    else row++;
 	    this.tiles.getByPosition(row, column).set('state', TILE_SHIP);
 
-	    // Done. Now the attack!
-	    Attack.activate();
+	    // Done. Now we notify the server.
+	    window.io.emit('user is ready');
 	},
     });
     _.extend(DefenseBoard.prototype, BoardMixin);
