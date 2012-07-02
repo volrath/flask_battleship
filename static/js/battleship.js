@@ -31,10 +31,44 @@ $(function(){
 	    };
 	},
 
+	initialize: function() {
+	    _.bindAll(this, 'receiveShot', 'ackShot');
+	    this.ioBind('receive_shot', window.io, this.receiveShot);
+	    this.ioBind('ack_shot', window.io, this.ackShot);
+	},
+
+	coordinates: function() {
+	    return [this.get('x'), this.get('y')];
+	},
+
 	isClickeable: function() {
 	    return this.get('clickable') &&
 		   (this.get('state') != TILE_UNTOUCHED ||
         	    this.get('state') != TILE_AIMED);
+	},
+
+	// socket.io listeners
+	receiveShot: function() {
+	    // This tile needs to be a Defense Tile.
+	    // This function needs to return the status and a list
+	    // with all the tiles affected.
+	    var new_state;
+	    if (this.get('state') == TILE_UNTOUCHED)
+		new_state = TILE_MISSED;
+	    else { // this tile is a ship
+		new_state = TILE_HIT;
+		// Now lets see if we took down a ship.
+	    }
+	    this.set({'state': new_state});
+	    window.io.emit('ack shot', {
+		'new_state': new_state,
+		'tiles_hit': [this.coordinates()]
+	    });
+	},
+
+	ackShot: function(new_state) {
+	    // This tile needs to be an Attack Tile.
+	    this.set(new_state);
 	},
     });
 
@@ -153,7 +187,9 @@ $(function(){
 
 	shoot: function() {
 	    // Handle shoot
-	    this.tiles.aimed()[0].save();
+	    //this.tiles.aimed()[0].save();
+	    var aimed_tile = this.tiles.aimed()[0];
+	    window.io.emit('user_shoots', aimed_tile.coordinates());
 	    // ...
 	    this.deactivate();
 	},
@@ -300,9 +336,16 @@ $(function(){
 
     var Notifications = new NotificationPanel;
 
+    // Init socket!
+    window.io = io.connect();
+    window.io.on('announcement', function(msg) { Notifications.setMessage(msg, 'info'); });
+
     // Init Boards!
     var Defense = new DefenseBoard;
     var Attack  = new AttackBoard;
 
     Defense.loadShips();
+
+    // Simulate entering a room
+    window.io.emit('user enters room', prompt('Username?'), 'room1');
 });
