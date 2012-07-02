@@ -65,10 +65,11 @@ class BattleShipRoomMixin(object):
         except KeyError:
             return False
 
-    def emit_to_room(self, event, room_name=None, *args):
+    def emit_to_room(self, event, *args, **kwargs):
         """Sends the `event` to all in the `room_name` (in this
         particular Namespace).
         """
+        room_name = kwargs.pop('room_name', None)
         players = self._find_room_players(room_name)
         if not players:
             return
@@ -109,36 +110,39 @@ class BattleShipRoomMixin(object):
 class BattleShipNamespace(BaseNamespace, BattleShipRoomMixin, BroadcastMixin):
     def on_user_enters_room(self, username, room_name):
         self.join(username, room_name)
-        self.broadcast_event('room_participants',
-                             {self._room_name: len(self._find_room_players())})
-        self.emit_to_room('announcement', '%s has connected' % username)
+        self.broadcast_event(
+            'room_participants',
+            {'users': ', '.join([player.session['username']
+                                 for player in self._find_room_players()])}
+        )
+        self.emit_to_room('/notifications:create',
+                          {'text': '%s has connected' % username})
 
     def on_user_is_ready(self):
         """The user has placed all his/her ships on the table and is
         ready to fight.
         """
         self.session['ready'] = True
-        self.emit_to_room('announcement', '%s is ready' % self._username)
+        self.emit_to_room('/notifications:create',
+                          {'text': '%s is ready' % self._username})
         players = self._find_room_players()
         if len(players) > 1 and all([player.session['ready']
                                      for player in players]):
             # We're in business! we will just randomly choose one
             # participant to begin the game.
-            if random.choice([True, False]):  # Like a coin to the air
-                first  = self.socket
-                second = self._opponent
-            else:
-                first  = self._opponent
-                second = self.socket
-            self.emit_to_user('turn_begins', first)
-            self.emit_to_user('turn_ends', second)
+            first = random.choice([self.socket, self._opponent])
+            self.emit_to_room('/notifications:create',
+                              {'text': '%s will be the first to attack' % \
+                              first.session['username']})
+            self.emit_to_user('/boards/attack:activate', first)
 
     def on_user_shoots(self, tile):
         """The user shoots for a tile!"""
         row, column = tile
-        self.emit_to_room('announcement',
-                          '%s shoots for %s %s!' % (self._username,
-                                                    row, column))
+        self.emit_to_room(
+            '/notifications:create',
+            {'text': '%s shoots for %s-%s!' % (self._username, column, row)}
+        )
         # there is no need in passing arguments with this event cause
         # the tile is referenced by id, and the calculations for a new
         # state in that clase are made directly into the client.
@@ -165,9 +169,10 @@ class BattleShipNamespace(BaseNamespace, BattleShipRoomMixin, BroadcastMixin):
             self.emit_to_user('/tiles/%s:ack_shot' % tile_id, self._opponent,
                               {'state': new_state})
         if len(tiles_hit) > 1:
-            self.emit_to_room('announcement',
-                              '%s lost a %s-tiles battleship!' % \
-                              (self._opponent, len(tiles_hit)))
+            self.emit_to_room(
+                '/notifications:create',
+                {'text': '%s lost a %s-tiles battleship!' % \
+                 (self._opponent, len(tiles_hit))})
         # change turns
-        self.emit_to_user('turn_ends', self._opponent)
-        self.emit_to_user('turn_begins')
+        self.emit_to_user('/boards/attack:deactivate', self._opponent)
+        self.emit_to_user('/boards/attack:activate')
