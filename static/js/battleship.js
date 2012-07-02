@@ -185,8 +185,14 @@ $(function(){
 	},
 
 	render: function() {
-	    //this.$el.attr('id', this.generateId(board));
 	    this.$el.removeClass().addClass(STATE_CLASS[this.model.get('state')]);
+	    // var self = this;
+	    // this.$el.removeClass().flip({
+	    // 	direction: 'tb',
+	    // 	onEnd: function() {
+	    // 	    self.$el.addClass(STATE_CLASS[self.model.get('state')]);
+	    // 	}
+	    // });
 	    return this;
 	},
     });
@@ -228,7 +234,7 @@ $(function(){
 	setTurn: function() {
 	    this.$el.removeClass();
 	    if (this.model.isActive())
-		this.$el.addClass('active');
+		this.$el.addClass('active animated tada');
 	},
     };
 
@@ -347,4 +353,5 @@ $(function(){
     // Simulate entering a room
     window.io.emit('user enters room', prompt('Username?'), 'room1');
     window.Defense.loadShips();
+    //window.Attack.model.activate();
 });
