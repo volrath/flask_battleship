@@ -245,6 +245,7 @@ $(function(){
 	    // Handle shoot
 	    //this.tiles.aimed()[0].save();
 	    var aimed_tile = this.tiles.aimed()[0];
+	    aimed_tile.set({state: TILE_LOADING});
 	    window.io.emit('user_shoots', aimed_tile.coordinates());
 	},
 
