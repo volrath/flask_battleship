@@ -49,7 +49,7 @@ footer {
     }
 }
 
-#board2.attack table td:hover { background-color: #f2f358!important; cursor: pointer }
+#board2.active table td:hover { background-color: #f2f358!important; cursor: pointer }
 
 td.untouched { background-image: none; }
 td.aimed { background-image: url('/static/images/tile-aimed.png'); }
@@ -64,11 +64,23 @@ td.ship { background-color: $bright-orange!important; }
    NOTIFICATIONS
    -----------------------------------------------------------------------------
  */
-#notification { background-color: $kind-of-gray; color: $bright-orange; font-size: 11pt; font-weight: bold; position: absolute; bottom: 1px; left: 50%; margin-left: -115px; width: 230px; @include border-top-radius(5px); padding: 20px 10px }
-#notification.shoot { background-color: $bright-orange; color: #FFF }
-#notification.success, #notification failure { background-color: #1e72a6; color: #FFF }
-
-#notification #shoot { cursor: pointer; height: 100% }
+#notification {
+    background-color: $kind-of-gray; color: #000; font-size: 10pt; position: absolute; bottom: 1px; left: 10px; width: 250px; border: 2px solid $darker-gray; border-bottom: 0px;
+    #shoot { background-color: $wood-orange; color: #FFF; cursor: pointer; font-size: 14pt; font-weight: bold; padding: 20px 0 }
+    #shoot:hover { background-color: $bright-orange; }
+    #notification-header { background-color: $darker-blue; color: #FFF; cursor: pointer; text-align: left; font-weight: bold; padding: 4px 10px; }
+    #logged-users {
+	color: #333; font-size: 8pt; text-align: left; padding: 5px 10px; border-top: 2px solid $darker-gray;
+        span { font-style: italic; }
+    }
+    #notification-list {
+	background-color: #FFF; color: #000; max-height: 250px; overflow-y: auto; text-align: left; font-size: 8pt;
+        li { border-left-width: 6px; border-left-style: solid; padding: 8px; margin: 3px 0; font-style: italic }
+        li.success { border-left-color: #36AA1F; }
+        li.info { border-left-color: $water-blue; }
+        li.failure { border-left-color: #B0160C; }
+    }
+}
 
 /*
    TITLES & TEXT
