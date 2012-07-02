@@ -64,12 +64,46 @@ $(function(){
 		'new_state': new_state,
 		'tiles_hit': [this.coordinates()]
 	    });
+
+	    // Notify the user...
+	    var text, cls = 'failure';
+	    switch(new_state) {
+	    case TILE_MISSED:
+		cls  = 'success';
+		text = 'Nothing happend!!';
+		break;
+	    case TILE_HIT:
+		text = 'Sorry dude, you\'ve been hit...';
+		break;
+	    case TILE_DOWN:
+		text = 'BOOM ' + this.repr() + '!!';
+	    }
+	    window.notifications.add({text: text, cls: cls});
 	},
 
 	ackShot: function(new_state) {
 	    // This tile needs to be an Attack Tile.
 	    this.set(new_state);
+
+	    // Notify the user...
+	    var text, cls = 'success';
+	    switch(new_state.state) {
+	    case TILE_MISSED:
+		cls  = 'failure';
+		text = 'Sorry dude, you hit water...';
+		break;
+	    case TILE_HIT:
+		text = 'You hit a Ship!!';
+		break;
+	    case TILE_DOWN:
+		text = 'BOOM ' + this.repr() + '!!';
+	    }
+	    window.notifications.add({text: text, cls: cls});
 	},
+
+	repr: function() {
+	    return this.get('y') + '-' + this.get('x');
+	}
     });
 
 
