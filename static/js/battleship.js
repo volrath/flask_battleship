@@ -214,7 +214,7 @@ $(function(){
 	    window.io.emit('user_shoots', aimed_tile.coordinates());
 	},
 
-	alertShoot: function() { Notifications.shoot(); },
+	alertShoot: function() { window.notifications.renderShoot(); },
     });
     _.extend(AttackBoard.prototype, BoardMixin);
 
@@ -302,70 +302,14 @@ $(function(){
     });
     _.extend(DefenseBoard.prototype, BoardMixin);
 
-    var NotificationPanel = Backbone.View.extend({
-	el: $('#notification'),
-
-	events: {
-	    'click #shoot':   'boardShoot',
-	    'click #restart': 'restart',
-	},
-
-	shoot: function() {
-	    if (this.$el.hasClass('shoot')) return;
-	    return this.setMessage('<div id="shoot">SHOOT!</div>', 'shoot');
-	},
-
-	aim: function() {
-	    return this.setMessage('Your move! aim your target.', 'info');
-	},
-
-	wait: function() {
-	    return this.setMessage('Wait for your opponent\'s move.', 'info');
-	},
-
-	won: function() {
-	    return this.setMessage('YOU WON! =)<br /><span id="restart">Restart</span>', 'success');
-	},
-
-	lose: function() {
-	    return this.setMessage('You Lose =(<br /><span id="restart">Restart</span>', 'failure');
-	},
-
-	hide: function() {
-	    this.$el.fadeOut('slow', function() {
-		$(this).empty().removeClass();
-	    });
-	},
-
-	setMessage: function(message, cls) {
-	    this.$el.addClass(cls).html(message).fadeIn('slow');
-	},
-
-	isHidden: function() {
-	    return this.$el.hasClass('hide');
-	},
-
-	// actions
-	boardShoot: function() {
-	    this.hide();
-	    Attack.shoot();
-	},
-
-	restart: function() { location.reload(); },
-    });
-
-    var Notifications = new NotificationPanel;
-
     // Init socket!
     window.io = io.connect();
-    window.io.on('announcement', function(msg) { Notifications.setMessage(msg, 'info'); });
 
     // Init Boards!
-    var Defense = new DefenseBoard;
-    var Attack  = new AttackBoard;
-
-    Defense.loadShips();
+    window.Defense = new DefenseBoard;
+    window.Attack  = new AttackBoard;
 
     // Simulate entering a room
     window.io.emit('user enters room', prompt('Username?'), 'room1');
+    window.Defense.loadShips();
 });
