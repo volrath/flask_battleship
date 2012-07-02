@@ -54,7 +54,7 @@ footer {
 td.untouched { background-image: none; }
 td.aimed { background-image: url('/static/images/tile-aimed.png'); }
 td.missed { background-image: url('/static/images/tile-missed.png'); }
-td.loading { background-image: url('/static/images/tile-loading.png'); }
+td.loading { background-image: url('/static/images/tile-loading.gif'); }
 td.hit { background-image: url('/static/images/tile-hit.png'); }
 td.down { background-image: url('/static/images/tile-down.png'); }
 td.ship { background-color: $bright-orange!important; }
