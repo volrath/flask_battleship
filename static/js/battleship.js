@@ -1,5 +1,5 @@
 $(function(){
-    var TILE_UNTOCHED = -1,
+    var TILE_UNTOUCHED = -1,
         TILE_AIMED    = 0,
         TILE_MISSED   = 1,
         TILE_LOADING  = 2,
@@ -8,7 +8,7 @@ $(function(){
         TILE_SHIP     = 5,
         STATE_CLASS   = {};
 
-    STATE_CLASS[TILE_UNTOCHED] = 'untouched';
+    STATE_CLASS[TILE_UNTOUCHED] = 'untouched';
     STATE_CLASS[TILE_AIMED] = 'aimed';
     STATE_CLASS[TILE_MISSED] = 'missed';
     STATE_CLASS[TILE_LOADING] = 'loading';
@@ -23,7 +23,7 @@ $(function(){
     var Tile = Backbone.Model.extend({
 	defaults: function() {
 	    return {
-		state: TILE_UNTOCHED,
+		state: TILE_UNTOUCHED,
 		clickable: false
 		// required attrs:
 		// x -- row (from 1 to 10)
@@ -33,7 +33,7 @@ $(function(){
 
 	isClickeable: function() {
 	    return this.get('clickable') &&
-		   (this.get('state') != TILE_UNTOCHED ||
+		   (this.get('state') != TILE_UNTOUCHED ||
         	    this.get('state') != TILE_AIMED);
 	},
     });
@@ -78,11 +78,11 @@ $(function(){
 	    if (!this.model.isClickeable()) return false;
 	    // Delete aim from all other tiles
 	    _.each(this.board.tiles.aimed(), function(tile) {
-		if (tile !== this) tile.set('state', TILE_UNTOCHED)
+		if (tile !== this) tile.set('state', TILE_UNTOUCHED)
 	    });
 	    // Toggle state...
 	    var currentState = this.model.get('state');
-	    this.model.set('state', (currentState == TILE_UNTOCHED ? TILE_AIMED : TILE_UNTOCHED));
+	    this.model.set('state', (currentState == TILE_UNTOUCHED ? TILE_AIMED : TILE_UNTOUCHED));
 	},
 
 	render: function() {
@@ -126,7 +126,7 @@ $(function(){
 	},
 
 	generateTileId: function(row, column) {
-	    return this.boardname.charAt(0) + '-' + row + '-' + column;
+            return this.boardname.charAt(0) + '-' + row + '-' + column;
 	},
     };
 
