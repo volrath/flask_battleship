@@ -16,10 +16,10 @@ def socket_io(path):
     socketio_manage(request.environ, {'': BattleShipNamespace})
 
 if __name__ == '__main__':
+    # app.run()
     if app.debug:
         from werkzeug.debug import DebuggedApplication
         app.wsgi_app = DebuggedApplication(app.wsgi_app, True)
-
     from socketio.server import SocketIOServer
-    SocketIOServer(('127.0.0.1', 5000), app, namespace="socket.io",
+    SocketIOServer(('0.0.0.0', 8888), app, namespace="socket.io",
                    policy_server=False).serve_forever()

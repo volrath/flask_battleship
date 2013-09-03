@@ -1533,8 +1533,12 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         (!this.isXDomain() || io.util.ua.hasCORS)) {
       var self = this;
 
-      io.util.on(global, 'unload', function () {
+	var xhr = io.util.request()
+	, uri = this.options.resource + '/' + io.protocol + '/' + this.sessionid;
+
+      io.util.on(global, 'beforeunload', function () {
         self.disconnectSync();
+	return 'you!';
       }, false);
     }
 
@@ -1826,9 +1830,10 @@ var io = ('undefined' === typeof module ? {} : module.exports);
   Socket.prototype.disconnectSync = function () {
     // ensure disconnection
     var xhr = io.util.request()
-      , uri = this.resource + '/' + io.protocol + '/' + this.sessionid;
+      , uri = this.options.resource + '/' + io.protocol + '/' + this.sessionid;
 
     xhr.open('GET', uri, true);
+    xhr.send(null);
 
     // handle disconnection immediately
     this.onDisconnect('booted');

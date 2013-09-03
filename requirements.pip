@@ -1,6 +1,5 @@
 # You will also need to install libevent-dev and compass.
 
-Flask==0.8
-Jinja2==2.6
-gevent-socketio==0.3.5-beta
-ipython==0.12.1
+Flask==0.9
+-e git+https://github.com/volrath/gevent-socketio.git@efb386a03a667d1bb11343c3cef50361cb968e69#egg=gevent_socketio-dev
+ipython==0.13
